@@ -42,7 +42,24 @@
     </ul>
 
     <script>
-    //This is for Updating the checkboxes
+    //This is for deleting a todo
+    const toDelete = document.querySelectorAll('.delete-clicked');
+    for(let i = 0; i < toDelete.length; i++) {
+      const item = toDelete[i];
+
+      item.onclick = function(e) {
+        const deleteId = e.target.dataset['id'];
+        fetch('/todos/' + deleteId, {
+          method: 'DELETE',
+        })
+        .then(function() {
+          const item = e.target.parentElement;
+          item.remove();
+        })
+      }
+    }
+
+    //This is for Updating a todo
       const checkboxes = document.querySelectorAll('.check-completed');
       for(let i = 0; i < checkboxes.length; i++) {
         const checkbox = checkboxes[i];
@@ -67,9 +84,11 @@
           })
         }
       }
+
+      //Variable for the value inside of the text input
       const descInput = document.getElementById('description');
-      
-      //This is for creating a new
+
+      //This is for creating a new todo
       document.getElementById('form').onsubmit=function(e) {
         e.preventDefault();
         const desc = descInput.value;
@@ -97,8 +116,16 @@
           const text = document.createTextNode(' ' + jsonResponse.description);
           li.appendChild(text);
 
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className='delete-clicked';
+          deleteBtn.setAttribute('data-id', jsonResponse.id);
+          deleteBtn.innerHTML = '&cross;';
+          li.appendChild(deleteBtn);
+
+          console.log(li);
           document.getElementById('todos').appendChild(li);
           document.getElementById('error').className = 'hidden';
+          window.location.reload();
         })
         .catch(function() {
           document.getElementById('error').className = '';
