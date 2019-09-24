@@ -10,7 +10,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://clmaciel@localhost:5432/to
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-
 migrate = Migrate(app, db)
 
 class Todo(db.Model):
@@ -21,7 +20,7 @@ class Todo(db.Model):
     list_id = db.Column(db.Integer, db.ForeignKey('todolists.id'), nullable = False)
 
     def __repr__(self):
-        return f'<Todo {self.id} {self.description}>'
+        return f'<Todo {self.id} {self.description}, List {self.list_id}>'
 
 class TodoList(db.Model):
     __tablename__ = 'todolists'
@@ -29,6 +28,9 @@ class TodoList(db.Model):
     name = db.Column(db.String, nullable = False)
     todos = db.relationship('Todo', backref = 'list', lazy = True)
 
+    def __repr__(self):
+        return f'<TodoList {self.id self.name}>'
+        
 #Not needed due to using migrations db.create_all()
 @app.route('/todos/create', methods=['POST'])
 def create_todo():
